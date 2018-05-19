@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.vincent.filepicker.Constant;
@@ -36,18 +37,20 @@ public class MainActivity extends AppCompatActivity {
 
     RecyclerView postRecyclerView;
     PostAdapter postAdapter;
+   // ImageView postImageView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+       // postImageView = findViewById(R.id.post_image_view);
 
         fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                final Dialog dialog = new Dialog(MainActivity.this);
+                final Dialog dialog = new Dialog(MainActivity.this, R.style.CustomDialog);
                 dialog.setContentView(R.layout.upload_layout);
                 dialog.setTitle("Add a Post");
                 dialog.show();
@@ -79,8 +82,12 @@ public class MainActivity extends AppCompatActivity {
                 dialog.findViewById(R.id.action_text).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Toast.makeText(MainActivity.this, "Text clicked", Toast.LENGTH_SHORT).show();
                         dialog.hide();
+                       // postImageView.setVisibility(View.GONE);
+                        Intent intent=new Intent(MainActivity.this,PostPreview.class);
+                        intent.putExtra("postType",2);
+                        startActivity(intent);
+
                     }
                 });
             }
@@ -122,6 +129,7 @@ public class MainActivity extends AppCompatActivity {
                     Bundle extras = data.getExtras();
                     Bitmap photo = (Bitmap) extras.get("data");
                     intent.putExtra("data", photo);
+                    intent.putExtra("postType", 0);
                     startActivity(intent);
                 }
                 break;
@@ -131,11 +139,10 @@ public class MainActivity extends AppCompatActivity {
                     StringBuilder builder = new StringBuilder();
                     for (ImageFile file : list) {
                         String path = file.getPath();
-                        Toast.makeText(this, path, Toast.LENGTH_SHORT).show();
+
                         Intent intent = new Intent(MainActivity.this, PostPreview.class);
-                        File imgFile = new File(path);
-                        Bitmap photo = BitmapFactory.decodeFile(imgFile.getPath());
-                        intent.putExtra("data", photo);
+                        intent.putExtra("data", path);
+                        intent.putExtra("postType", 1);
                         startActivity(intent);
                     }
                 }
